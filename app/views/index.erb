@@ -1,1 +1,70 @@
-<h1>Home Page</h1>
+<h1>Ryan's Display ONLY JukeBox</h1>
+
+<% if current_user %>
+  <form method="post" action="signout">
+    Welcome, 
+    <%= current_user.username %>
+    <input type="submit" value="Sign Out"></div>
+  </form>
+<% else %>
+  <div>
+  <h4> If you are already a member, sign in <a href="/signin">HERE</a></h3>
+  <h4> If you are not a member, please <a href="/signup">SIGN UP</a>!</h3><br>
+<% end %>
+<br><br>
+
+<div><a href="/song/add">Add another song... It's FREE (for now)!</a></div><br><br>
+
+<div>
+<% if all_songs %>
+  <% @songs.each do |song| %>
+    <div>
+      <h4><%= song.title %></h4>
+      <p>
+      <div>
+      <% if song.user %>
+        <label>Posted by: </label>
+        <%= song.user.username %>
+      <%end%>
+      <div>
+      <label>Author: </label>
+      <%= song.author %>
+      <div>
+      <label>Created at: </label>
+      <%= song.created_at %>
+      <label>Updated at: </label>
+      <%= song.updated_at %>
+      </div>
+      </p>
+    </div>
+    <form method="post" action="/review">
+        <div class="review">
+          <label>Comment:</label><br / >
+          <textarea name="review" id="review"></textarea><br />
+          <input type ="hidden" name="song_id" value="<%=song.id%>" />
+          <input type="submit" value="Post">
+        </div>
+      </form>
+    <% end %> 
+      <div class="old_reviews">
+        <% reviews = Review.where("song_id = ?",song.id).order(created_at: :desc) %>
+        <% if reviews %>
+           <% reviews.each do |review| %>
+            <p>
+              <label>Posted by: </label>
+              <%= review.user.username %>
+              <% if review.user == current_user %>
+                <form method="post" action="/delete_post">
+                <input type="hidden" name="review_id" value="<%=review.id%>" />
+                <input type="submit" value="Delete Review"/>
+                </form>
+              <%end%>
+              <p><%=review.content%></p>
+            </p>
+            <%end%>
+        <%end%>
+      </div>
+    <% end %>
+  <%end%>
+
+<div>
